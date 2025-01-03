@@ -1,7 +1,7 @@
 # Text Encoding Fixer 🔧
 
 <div align="center">
-  <img src="static/logo.png" alt="Text Encoding Fixer Logo" width="200"/>
+  <img src="static/capture.png" alt="Text Encoding Fixer Logo" width="200"/>
   <p>A powerful web application to fix encoding issues in text and CSV files</p>
 </div>
 
