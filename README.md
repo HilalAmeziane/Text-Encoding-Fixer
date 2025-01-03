@@ -44,7 +44,7 @@
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/text-encoding-fixer.git
+git clone https://github.com/HilalAmeziane/Text-Encoding-Fixer.git
 cd text-encoding-fixer
 ```
 
