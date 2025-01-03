@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Encoding Fixer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+            --shadow-sm: 0 2px 4px rgba(99, 102, 241, 0.05);
+            --shadow-md: 0 4px 12px rgba(99, 102, 241, 0.08);
+            --shadow-lg: 0 12px 24px rgba(99, 102, 241, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.47059;
+            font-weight: 400;
+            letter-spacing: -0.022em;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .text-areas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .text-area-container {
+            background: var(--surface);
+            border-radius: 18px;
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .text-area-container:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .text-area-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .text-area-label i {
+            color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            height: 400px;
+            padding: 1rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text);
+            background: var(--background);
+            resize: none;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .char-count {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            background: var(--surface);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--background);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .upload-section {
+            background: var(--surface);
+            border-radius: 18px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            padding: 2.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--background);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: #f8f8fa;
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: transform 0.2s ease;
+        }
+
+        .upload-zone:hover .upload-icon {
+            transform: translateY(-4px);
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-list {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: var(--background);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .file-item:hover {
+            transform: translateX(4px);
+        }
+
+        .file-name {
+            flex-grow: 1;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        .file-status {
+            font-size: 0.85rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            margin: 0 1rem;
+        }
+
+        .file-status.pending {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+        }
+
+        .file-status.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .file-status.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .action-btn {
+            padding: 0.4rem;
+            color: var(--text-secondary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .convert-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+        }
+
+        .convert-btn:not(:disabled):hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .convert-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                padding: 1rem 0;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .text-areas {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .text-area-container {
+                padding: 1rem;
+            }
+
+            textarea {
+                height: 300px;
+            }
+
+            .upload-section {
+                padding: 1.5rem;
+            }
+
+            .upload-zone {
+                padding: 2rem 1rem;
+            }
+
+            .convert-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Text Encoding Fixer</h1>
+            <p>Fix encoding issues in your text files easily</p>
+        </header>
+
+        <main class="main-content">
+            <div class="text-areas">
+                <div class="text-area-container">
+                    <label class="text-area-label">
+                        <i class="fas fa-file-import"></i>
+                        Input Text
+                    </label>
+                    <textarea id="input-text" placeholder="Paste your text here..."></textarea>
+                    <div class="char-count" id="char-count">0 characters</div>
+                </div>
+                <div class="text-area-container">
+                    <label class="text-area-label">
+                        <i class="fas fa-file-export"></i>
+                        Fixed Text
+                    </label>
+                    <textarea id="output-text" readonly></textarea>
+                    <button class="copy-btn" onclick="copyOutput()">
+                        <i class="fas fa-copy"></i>
+                        Copy
+                    </button>
+                </div>
+            </div>
+
+            <div class="upload-section">
+                <h2 class="section-title">
+                    <i class="fas fa-file-upload"></i>
+                    File Upload
+                </h2>
+                <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <div class="upload-text">Drop your files here or click to select</div>
+                    <input type="file" id="file-input" multiple style="display: none;">
+                </div>
+                
+                <div id="file-list" class="file-list"></div>
+                
+                <button id="convert-btn" class="convert-btn" disabled>
+                    <i class="fas fa-magic"></i>
+                    Fix Encoding
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const inputText = document.getElementById('input-text');
+        const outputText = document.getElementById('output-text');
+        const charCount = document.getElementById('char-count');
+        const fileInput = document.getElementById('file-input');
+        const dropZone = document.getElementById('drop-zone');
+        const fileList = document.getElementById('file-list');
+        const convertBtn = document.getElementById('convert-btn');
+
+        // Update character count
+        inputText.addEventListener('input', function() {
+            const count = this.value.length;
+            charCount.textContent = count === 1 ? '1 character' : `${count} characters`;
+            
+            // Send text to backend for conversion
+            fetch('/convert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: this.value })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    outputText.value = data.text;
+                } else {
+                    console.error('Error:', data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Copy output text
+        function copyOutput() {
+            outputText.select();
+            document.execCommand('copy');
+        }
+
+        // File upload handling
+        function handleFiles(files) {
+            convertBtn.disabled = files.length === 0;
+            
+            fileList.innerHTML = '';
+            Array.from(files).forEach(file => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span class="file-status pending">Pending</span>
+                    <button class="action-btn" onclick="this.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                fileList.appendChild(item);
+            });
+        }
+
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        // Drag and drop handling
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--primary)';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = 'var(--border)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = 'var(--border)';
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Convert files
+        convertBtn.addEventListener('click', () => {
+            const files = fileInput.files;
+            const formData = new FormData();
+            
+            Array.from(files).forEach(file => {
+                formData.append('files[]', file);
+            });
+
+            // Désactiver le bouton pendant la conversion
+            convertBtn.disabled = true;
+            convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+
+            fetch('/convert_csv', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server response:', data);
+                
+                if (data.status === 'success') {
+                    data.results.forEach((result) => {
+                        console.log('Processing result:', result);
+                        
+                        const fileItem = Array.from(fileList.children)
+                            .find(item => item.querySelector('.file-name').textContent === result.filename);
+                        
+                        if (fileItem) {
+                            const statusSpan = fileItem.querySelector('.file-status');
+                            
+                            if (result.status === 'success') {
+                                statusSpan.className = 'file-status success';
+                                statusSpan.textContent = 'Success';
+                                
+                                try {
+                                    console.log('Creating blob from base64 data');
+                                    const blob = base64ToBlob(result.data);
+                                    console.log('Blob created:', blob);
+                                    
+                                    const url = window.URL.createObjectURL(blob);
+                                    console.log('URL created:', url);
+                                    
+                                    const a = document.createElement('a');
+                                    a.style.display = 'none';
+                                    a.href = url;
+                                    a.download = `fixed_${result.filename}`;
+                                    
+                                    document.body.appendChild(a);
+                                    console.log('Triggering download for:', a.download);
+                                    a.click();
+                                    
+                                    // Cleanup
+                                    setTimeout(() => {
+                                        document.body.removeChild(a);
+                                        window.URL.revokeObjectURL(url);
+                                    }, 100);
+                                } catch (error) {
+                                    console.error('Error during download:', error);
+                                    statusSpan.className = 'file-status error';
+                                    statusSpan.textContent = 'Download failed';
+                                }
+                            } else {
+                                statusSpan.className = 'file-status error';
+                                statusSpan.textContent = result.message || 'Error';
+                            }
+                        }
+                    });
+                } else {
+                    console.error('Server returned error:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+            })
+            .finally(() => {
+                // Réactiver le bouton
+                convertBtn.disabled = false;
+                convertBtn.innerHTML = '<i class="fas fa-magic"></i> Fix Encoding';
+            });
+        });
+
+        function base64ToBlob(base64) {
+            try {
+                console.log('Converting base64 to blob, length:', base64.length);
+                const binaryString = window.atob(base64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                const blob = new Blob([bytes], {type: 'text/csv'});
+                console.log('Blob created successfully:', blob.size, 'bytes');
+                return blob;
+            } catch (error) {
+                console.error('Error in base64ToBlob:', error);
+                throw error;
+            }
+        }
+    </script>
+</body>
+</html>
